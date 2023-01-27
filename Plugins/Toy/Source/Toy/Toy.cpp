@@ -1,30 +1,44 @@
 #include "Toy.h"
 #include "Toolbar/ButtonCommand.h"
+#include "Toolbar/IconStyle.h"
 #include "LevelEditor.h"
 
 #define LOCTEXT_NAMESPACE "FToyModule"
 
+#define VIEW_UE4_RESOURCES 0
+
+//Todo. DebuggerCategory에 등록
 void FToyModule::StartupModule()
 {
+	FIconStyle::Get();
 	FButtonCommand::Register();
+	
+	Extender = MakeShareable(new FExtender());
 
 	FToolBarExtensionDelegate toolBarBuilderDelegate = FToolBarExtensionDelegate::CreateRaw(this, &FToyModule::AddToolBar);
+	Extender->AddToolBarExtension("Compile", EExtensionHook::Before, FButtonCommand::Get().Command, toolBarBuilderDelegate);
 
-	Extender = MakeShareable(new FExtender());
-	Extender->AddToolBarExtension("Complie", EExtensionHook::Before, nullptr, toolBarBuilderDelegate);
+	FToolBarExtensionDelegate toolBarBuilderDelegate2 = FToolBarExtensionDelegate::CreateRaw(this, &FToyModule::AddToolBar2);
+	Extender->AddToolBarExtension("Compile", EExtensionHook::Before, FButtonCommand::Get().Command, toolBarBuilderDelegate2);
 
 	FLevelEditorModule& levelEditor = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
 	levelEditor.GetToolBarExtensibilityManager()->AddExtender(Extender);
+
+#if VIEW_UE4_RESOURCES
+	TArray<const FSlateBrush*> brushes;
+	FEditorStyle::GetResources(brushes);
+	for (const FSlateBrush* brush : brushes)
+		GLog->Log(brush->GetResourceName().ToString());
+#endif
 }
 
 void FToyModule::ShutdownModule()
 {
+	FIconStyle::Shutdown();
 }
 
 void FToyModule::AddToolBar(class FToolBarBuilder& InBuilder)
 {
-	FSlateIcon icon = FSlateIcon(FEditorStyle::GetStyleSetName(), "LevelEditor.SelectMode"); //Todo. ??뭥미?
-
 	InBuilder.AddSeparator();
 	InBuilder.AddToolBarButton
 	(
@@ -32,10 +46,22 @@ void FToyModule::AddToolBar(class FToolBarBuilder& InBuilder)
 		NAME_None,
 		FText::FromString("Load Mesh"),
 		FText::FromString("Load Mesh Data"),
-		icon
+		FIconStyle::Get()->ToolBar_Icon
 	);
 
-	//버튼의 정의(버튼의 디자인, 버튼 눌렀을 때 액션..)
+}
+
+void FToyModule::AddToolBar2(class FToolBarBuilder& InBuilder)
+{
+	InBuilder.AddToolBarButton
+	(
+		FButtonCommand::Get().ID2,
+		NAME_None,
+		FText::FromString("Open Viewer"),
+		FText::FromString("Open Viewer"),
+		FIconStyle::Get()->ToolBar_Icon2
+	);
+
 }
 
 #undef LOCTEXT_NAMESPACE

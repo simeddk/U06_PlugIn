@@ -12,6 +12,12 @@ public:
 public:
 	virtual void RegisterCommands() override;
 
+private:
+	void OnClick();
+	void OnClick2();
+
 public:
 	TSharedPtr<FUICommandInfo> ID;
+	TSharedPtr<FUICommandInfo> ID2;
+	TSharedPtr<FUICommandList> Command;
 };

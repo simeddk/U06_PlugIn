@@ -21,7 +21,8 @@ public class Toy : ModuleRules
 			"Engine",
 			"Slate",
 			"SlateCore",
-			"EditorStyle"
+			"EditorStyle",
+			"Projects"
 		});
 		
 		
