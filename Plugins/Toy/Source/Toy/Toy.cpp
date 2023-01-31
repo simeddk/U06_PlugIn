@@ -1,28 +1,40 @@
 #include "Toy.h"
 #include "Toolbar/ButtonCommand.h"
 #include "Toolbar/IconStyle.h"
+#include "DebuggerCategory/DebuggerCategory.h"
 #include "LevelEditor.h"
+#include "GameplayDebugger.h"
 
 #define LOCTEXT_NAMESPACE "FToyModule"
 
 #define VIEW_UE4_RESOURCES 0
 
-//Todo. DebuggerCategory¿¡ µî·Ï
 void FToyModule::StartupModule()
 {
-	FIconStyle::Get();
-	FButtonCommand::Register();
-	
-	Extender = MakeShareable(new FExtender());
+	//ToolBar
+	{
+		FIconStyle::Get();
+		FButtonCommand::Register();
 
-	FToolBarExtensionDelegate toolBarBuilderDelegate = FToolBarExtensionDelegate::CreateRaw(this, &FToyModule::AddToolBar);
-	Extender->AddToolBarExtension("Compile", EExtensionHook::Before, FButtonCommand::Get().Command, toolBarBuilderDelegate);
+		Extender = MakeShareable(new FExtender());
 
-	FToolBarExtensionDelegate toolBarBuilderDelegate2 = FToolBarExtensionDelegate::CreateRaw(this, &FToyModule::AddToolBar2);
-	Extender->AddToolBarExtension("Compile", EExtensionHook::Before, FButtonCommand::Get().Command, toolBarBuilderDelegate2);
+		FToolBarExtensionDelegate toolBarBuilderDelegate = FToolBarExtensionDelegate::CreateRaw(this, &FToyModule::AddToolBar);
+		Extender->AddToolBarExtension("Compile", EExtensionHook::Before, FButtonCommand::Get().Command, toolBarBuilderDelegate);
 
-	FLevelEditorModule& levelEditor = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
-	levelEditor.GetToolBarExtensibilityManager()->AddExtender(Extender);
+		FToolBarExtensionDelegate toolBarBuilderDelegate2 = FToolBarExtensionDelegate::CreateRaw(this, &FToyModule::AddToolBar2);
+		Extender->AddToolBarExtension("Compile", EExtensionHook::Before, FButtonCommand::Get().Command, toolBarBuilderDelegate2);
+
+		FLevelEditorModule& levelEditor = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
+		levelEditor.GetToolBarExtensibilityManager()->AddExtender(Extender);
+	}
+
+	//DebuggerCategory
+	{
+		IGameplayDebugger& gameplayDeubgger = IGameplayDebugger::Get();
+		IGameplayDebugger::FOnGetCategory makeCategoryDelegate = IGameplayDebugger::FOnGetCategory::CreateStatic(&FDebuggerCategory::MakeInstance);
+		gameplayDeubgger.Get().RegisterCategory("AwesomeData", makeCategoryDelegate, EGameplayDebuggerCategoryState::EnabledInGameAndSimulate, 5);
+		gameplayDeubgger.NotifyCategoriesChanged();
+	}
 
 #if VIEW_UE4_RESOURCES
 	TArray<const FSlateBrush*> brushes;
@@ -35,6 +47,9 @@ void FToyModule::StartupModule()
 void FToyModule::ShutdownModule()
 {
 	FIconStyle::Shutdown();
+
+	if (IGameplayDebugger::IsAvailable())
+		IGameplayDebugger::Get().UnregisterCategory("AwesomeData");
 }
 
 void FToyModule::AddToolBar(class FToolBarBuilder& InBuilder)
