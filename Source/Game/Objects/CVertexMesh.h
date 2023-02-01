@@ -29,7 +29,7 @@ private:
 private:
 	TArray<FVector> Positions;
 	TArray<FVector> Normals;
-	TArray<FColor> Color;
+	TArray<FColor> Colors;
 	TArray<FVector2D> UVs;
 
 	TArray<int32> Indices;

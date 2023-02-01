@@ -4,6 +4,10 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "GameCharacter.h"
 #include "Engine/World.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "ProceduralMeshComponent.h" 
+#include "Materials/MaterialInstanceConstant.h"
+#include "KismetProceduralMeshLibrary.h"
 
 AGamePlayerController::AGamePlayerController()
 {
@@ -25,6 +29,8 @@ void AGamePlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("SetDestination", IE_Pressed, this, &AGamePlayerController::OnSetDestinationPressed);
 	InputComponent->BindAction("SetDestination", IE_Released, this, &AGamePlayerController::OnSetDestinationReleased);
+
+	InputComponent->BindAction("Slice", IE_Pressed, this, &AGamePlayerController::OnSlice);
 }
 
 void AGamePlayerController::MoveToMouseCursor()
@@ -59,3 +65,51 @@ void AGamePlayerController::OnSetDestinationReleased()
 {
 	bMoveToMouseCursor = false;
 }
+
+void AGamePlayerController::OnSlice()
+{
+	//LineTrace
+	FVector start = GetPawn()->GetActorLocation();
+	FVector end = FVector(CursorLocation.X, CursorLocation.Y, start.Z);
+
+	TArray<AActor*> ignores;
+	ignores.Add(GetPawn());
+
+	FHitResult hitResult;
+	UKismetSystemLibrary::LineTraceSingle
+	(
+		GetWorld(),
+		start,
+		end,
+		UEngineTypes::ConvertToTraceType(ECC_Visibility),
+		false,
+		ignores,
+		EDrawDebugTrace::ForDuration,
+		hitResult,
+		true,
+		FLinearColor::Green,
+		FLinearColor::Red,
+		1.f
+	);
+	if (hitResult.IsValidBlockingHit() == false) return;
+
+	//Slice
+	UProceduralMeshComponent* otherProcMesh = Cast<UProceduralMeshComponent>(hitResult.Component);
+	if (otherProcMesh == nullptr) return;
+
+	UProceduralMeshComponent* outProcMesh = nullptr;
+
+	UKismetProceduralMeshLibrary::SliceProceduralMesh
+	(
+		otherProcMesh,
+		hitResult.Location,
+		FVector(0, 1, 0),
+		true,
+		outProcMesh,
+		EProcMeshSliceCapOption::CreateNewSectionForCap,
+		nullptr
+	);
+
+	outProcMesh->SetSimulatePhysics(true);
+}
+

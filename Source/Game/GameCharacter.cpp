@@ -9,6 +9,7 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
+#include "GamePlayerController.h"
 
 AGameCharacter::AGameCharacter()
 {
@@ -62,6 +63,10 @@ void AGameCharacter::Tick(float DeltaSeconds)
 			FRotator CursorR = CursorFV.Rotation();
 			CursorToWorld->SetWorldLocation(TraceHitResult.Location);
 			CursorToWorld->SetWorldRotation(CursorR);
+
+			AGamePlayerController* pc = Cast<AGamePlayerController>(PC);
+			if (!!pc)
+				pc->SetCursorLocation(TraceHitResult.Location);
 		}
 	}
 }
