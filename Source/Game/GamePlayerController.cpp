@@ -97,19 +97,29 @@ void AGamePlayerController::OnSlice()
 	UProceduralMeshComponent* otherProcMesh = Cast<UProceduralMeshComponent>(hitResult.Component);
 	if (otherProcMesh == nullptr) return;
 
+	UMaterialInstanceConstant* material 
+		= Cast<UMaterialInstanceConstant>(StaticLoadObject(UMaterialInstanceConstant::StaticClass(), nullptr, TEXT("MaterialInstanceConstant'/Game/Materials/MAT_Plane_Inst.MAT_Plane_Inst'")));
+
 	UProceduralMeshComponent* outProcMesh = nullptr;
+
+	FVector direction = end - start;
+	direction.Normalize();
+
+	FVector planeNormal = GetPawn()->GetActorUpVector() ^ direction;
+	planeNormal.Normalize();
 
 	UKismetProceduralMeshLibrary::SliceProceduralMesh
 	(
 		otherProcMesh,
 		hitResult.Location,
-		FVector(0, 1, 0),
+		planeNormal,
 		true,
 		outProcMesh,
 		EProcMeshSliceCapOption::CreateNewSectionForCap,
-		nullptr
+		material
 	);
 
 	outProcMesh->SetSimulatePhysics(true);
+	outProcMesh->AddImpulse(direction * 600, NAME_None, true);
 }
 

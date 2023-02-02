@@ -22,8 +22,10 @@ public class Toy : ModuleRules
 			"Slate",
 			"SlateCore",
 			"EditorStyle",
+			"Game",
 			"Projects",
-			"GameplayDebugger"
+			"GameplayDebugger",
+			"PropertyEditor"
 		});
 		
 		
