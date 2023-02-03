@@ -25,7 +25,9 @@ public class Toy : ModuleRules
 			"Game",
 			"Projects",
 			"GameplayDebugger",
-			"PropertyEditor"
+			"PropertyEditor",
+			"MainFrame",
+			"DesktopPlatform"
 		});
 		
 		

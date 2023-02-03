@@ -14,7 +14,9 @@ ACMeshActor::ACMeshActor()
 
 	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> materialAsset(TEXT("MaterialInstanceConstant'/Game/Materials/MAT_Write.MAT_Write'"));
 	if (materialAsset.Succeeded())
-		Mesh->SetMaterial(0, materialAsset.Object);
+		Material = materialAsset.Object;
+
+	Mesh->SetMaterial(0, Material);
 }
 
 void ACMeshActor::BeginPlay()
@@ -30,17 +32,18 @@ void ACMeshActor::ShuffleMaterial()
 
 	for (const FTextureParameterValue& value : Material->TextureParameterValues)
 	{
-		//Todo
-		/*if (value.ParameterInfo.Name.Compare("Metallic") == 0)
-			Material->SetScalarParameterValueEditorOnly(value.ParameterInfo, MaterialParameters[index].Metallic);
+		//Texture Param
+		if (value.ParameterInfo.Name.Compare("BaseMap") == 0)
+			Material->SetTextureParameterValueEditorOnly(value.ParameterInfo, MaterialParameters[index].BaseMap);
 
-		if (value.ParameterInfo.Name.Compare("Roughness_Min") == 0)
-			Material->SetScalarParameterValueEditorOnly(value.ParameterInfo, MaterialParameters[index].Roughness_Min);
+		if (value.ParameterInfo.Name.Compare("RoughnessMap") == 0)
+			Material->SetTextureParameterValueEditorOnly(value.ParameterInfo, MaterialParameters[index].RoughnessMap);
 
-		if (value.ParameterInfo.Name.Compare("Roughness_Max") == 0)
-			Material->SetScalarParameterValueEditorOnly(value.ParameterInfo, MaterialParameters[index].Roughness_Max);*/
+		if (value.ParameterInfo.Name.Compare("NormalMap") == 0)
+			Material->SetTextureParameterValueEditorOnly(value.ParameterInfo, MaterialParameters[index].NormalMap);
 	}
 	
+	//Scalar Param
 	for (const FScalarParameterValue& value : Material->ScalarParameterValues)
 	{
 		if (value.ParameterInfo.Name.Compare("Metallic") == 0)
