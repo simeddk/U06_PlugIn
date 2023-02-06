@@ -27,7 +27,8 @@ public class Toy : ModuleRules
 			"GameplayDebugger",
 			"PropertyEditor",
 			"MainFrame",
-			"DesktopPlatform"
+			"DesktopPlatform",
+			"UnrealEd"
 		});
 		
 		

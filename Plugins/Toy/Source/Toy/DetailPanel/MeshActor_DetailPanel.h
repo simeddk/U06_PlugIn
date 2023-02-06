@@ -11,10 +11,14 @@ struct FBinaryData
 	TArray<FVector2D> UVs;
 	TArray<int32> Indices;
 
-	//Todo
 	friend FArchive& operator <<(FArchive& InArchive, FBinaryData& InData)
 	{
-		return InArchive;
+		return InArchive
+			<< InData.Positions
+			<< InData.Normals
+			<< InData.Colors
+			<< InData.UVs
+			<< InData.Indices;
 	}
 };
 
