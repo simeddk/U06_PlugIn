@@ -3,6 +3,7 @@
 #include "Toolbar/IconStyle.h"
 #include "DebuggerCategory/DebuggerCategory.h"
 #include "DetailPanel/MeshActor_DetailPanel.h"
+#include "Viewer/MeshViewer.h"
 #include "LevelEditor.h"
 #include "GameplayDebugger.h"
 #include "Objects/CMeshActor.h"
@@ -58,10 +59,11 @@ void FToyModule::StartupModule()
 
 void FToyModule::ShutdownModule()
 {
-	FIconStyle::Shutdown();
-
 	if (IGameplayDebugger::IsAvailable())
 		IGameplayDebugger::Get().UnregisterCategory("AwesomeData");
+
+	FIconStyle::Shutdown();
+	FMeshViewer::ShutDown();
 }
 
 void FToyModule::AddToolBar(class FToolBarBuilder& InBuilder)

@@ -3,8 +3,10 @@
 #include "DesktopPlatformModule.h"
 #include "Serialization/BufferArchive.h"
 #include "DetailPanel/MeshActor_DetailPanel.h"
+#include "Viewer/MeshViewer.h"
 #include "LevelEditorViewport.h"
 #include "Objects/CMeshActor_Copied.h"
+#include "Objects/CMeshObject.h"
 #include "Misc/FileHelper.h"
 
 #define COPIED_CSV
@@ -121,5 +123,5 @@ void FButtonCommand::OnClick()
 
 void FButtonCommand::OnClick2()
 {
-	UE_LOG(LogTemp, Error, TEXT("Open Viewer Button Clicked"));
+	FMeshViewer::OpenWindow(NewObject<UCMeshObject>());
 }

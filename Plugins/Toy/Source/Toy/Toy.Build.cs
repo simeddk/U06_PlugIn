@@ -28,7 +28,8 @@ public class Toy : ModuleRules
 			"PropertyEditor",
 			"MainFrame",
 			"DesktopPlatform",
-			"UnrealEd"
+			"UnrealEd",
+			"AdvancedPreviewScene"
 		});
 		
 		
