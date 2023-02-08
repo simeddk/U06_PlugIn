@@ -29,6 +29,11 @@ void SMeshViewer_Viewport::Construct(const FArguments& InArgs)
 	Scene->AddComponent(Mesh, transform);
 }
 
+TSharedRef<class FAdvancedPreviewScene> SMeshViewer_Viewport::GetScene()
+{
+	return Scene.ToSharedRef();
+}
+
 void SMeshViewer_Viewport::AddReferencedObjects(FReferenceCollector& Collector)
 {
 	Collector.AddReferencedObject(Mesh);

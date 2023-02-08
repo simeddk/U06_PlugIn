@@ -10,6 +10,7 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 #include "GamePlayerController.h"
+#include "AssetTools/CAsset.h"
 
 AGameCharacter::AGameCharacter()
 {
@@ -47,6 +48,15 @@ AGameCharacter::AGameCharacter()
 
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	ConstructorHelpers::FObjectFinder<UCAsset> asset(TEXT("CAsset'/Game/Objects/Asset1.Asset1'"));
+	if (asset.Succeeded())
+	{
+		UE_LOG(LogTemp, Error, TEXT("Name : %s"), *asset.Object->Name.ToString());
+		UE_LOG(LogTemp, Error, TEXT("DropRate : %s"), *FString::SanitizeFloat(asset.Object->DropRate));
+		UE_LOG(LogTemp, Error, TEXT("StaticMesh : %s"), *asset.Object->StaticMesh->GetName());
+		//UE_LOG(LogTemp, Error, TEXT("Material : %s"), *asset.Object->Material->GetName());
+	}
 }
 
 void AGameCharacter::Tick(float DeltaSeconds)

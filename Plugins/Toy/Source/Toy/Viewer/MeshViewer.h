@@ -20,6 +20,8 @@ public:
 
 private:
 	TSharedRef<SDockTab> Spawn_ViewportTab(const FSpawnTabArgs& InArgs);
+	TSharedRef<SDockTab> Spawn_PreviewTab(const FSpawnTabArgs& InArgs);
+	TSharedRef<SDockTab> Spawn_DetailsTab(const FSpawnTabArgs& InArgs);
 
 public:
 	virtual FName GetToolkitFName() const override;
@@ -29,4 +31,6 @@ public:
 
 private:
 	TSharedPtr<class SMeshViewer_Viewport> Viewport;
+	TSharedPtr<class SWidget> PreviewSceneSettings;
+	TSharedPtr<class IDetailsView> DetailsView;
 };

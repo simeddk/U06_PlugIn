@@ -9,6 +9,7 @@ public:
 	SMeshViewer_Viewport();
 
 	void Construct(const FArguments& InArgs);
+	TSharedRef<class FAdvancedPreviewScene> GetScene();
 
 public:
 	virtual void AddReferencedObjects(FReferenceCollector& Collector) override;

@@ -8,7 +8,7 @@ public class Toy : ModuleRules
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
-		PrivateIncludePaths.Add(ModuleDirectory);
+		PublicIncludePaths.Add(ModuleDirectory);
 			
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
@@ -29,7 +29,9 @@ public class Toy : ModuleRules
 			"MainFrame",
 			"DesktopPlatform",
 			"UnrealEd",
-			"AdvancedPreviewScene"
+			"AdvancedPreviewScene",
+			"InputCore",
+			"AssetTools"
 		});
 		
 		

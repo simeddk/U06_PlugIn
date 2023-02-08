@@ -4,9 +4,12 @@
 #include "DebuggerCategory/DebuggerCategory.h"
 #include "DetailPanel/MeshActor_DetailPanel.h"
 #include "Viewer/MeshViewer.h"
+#include "AssetTools/CAssetAction.h"
 #include "LevelEditor.h"
 #include "GameplayDebugger.h"
 #include "Objects/CMeshActor.h"
+#include "AssetToolsModule.h"
+#include "IAssetTypeActions.h"
 
 #define LOCTEXT_NAMESPACE "FToyModule"
 
@@ -47,6 +50,15 @@ void FToyModule::StartupModule()
 			ACMeshActor::StaticClass()->GetFName(),
 			FOnGetDetailCustomizationInstance::CreateStatic(&FMeshActor_DetailPanel::MakeInstance)
 		);
+	}
+
+	//AssetTools
+	{
+		IAssetTools& assetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+		//EAssetTypeCategories::Type category = EAssetTypeCategories::Misc;
+		EAssetTypeCategories::Type category = assetTools.RegisterAdvancedAssetCategory(NAME_None, FText::FromString("Awesome Category"));
+		Actions = MakeShareable(new CAssetAction(category));
+		assetTools.RegisterAssetTypeActions(Actions.ToSharedRef());
 	}
 
 #if VIEW_UE4_RESOURCES

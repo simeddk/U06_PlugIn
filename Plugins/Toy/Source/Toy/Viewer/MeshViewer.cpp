@@ -1,5 +1,6 @@
 #include "MeshViewer.h"
 #include "MeshViewer_Viewport.h"
+#include "AdvancedPreviewSceneModule.h"
 
 TSharedPtr<FMeshViewer> FMeshViewer::Instance = nullptr;
 const static FName ToolkitName = TEXT("MeshViewer");
@@ -30,6 +31,14 @@ void FMeshViewer::ShutDown()
 void FMeshViewer::Open(UObject* InAsset)
 {
 	Viewport = SNew(SMeshViewer_Viewport);
+
+	FAdvancedPreviewSceneModule& scene = FModuleManager::LoadModuleChecked<FAdvancedPreviewSceneModule>("AdvancedPreviewScene");
+	PreviewSceneSettings = scene.CreateAdvancedPreviewSceneSettingsWidget(Viewport->GetScene());
+
+	FPropertyEditorModule& propertyEditor = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+	FDetailsViewArgs args(false, false, true, FDetailsViewArgs::ObjectsUseNameArea);
+	DetailsView = propertyEditor.CreateDetailView(args);
+	DetailsView->SetObject(InAsset);
 
 	TSharedRef<FTabManager::FLayout> layout = FTabManager::NewLayout("MeshViewer_Layout")
 		->AddArea
@@ -84,6 +93,12 @@ void FMeshViewer::RegisterTabSpawners(const TSharedRef<FTabManager>& InTabManage
 
 	FOnSpawnTab tab = FOnSpawnTab::CreateSP(this, &FMeshViewer::Spawn_ViewportTab);
 	TabManager->RegisterTabSpawner(ViewportTabId, tab);
+
+	FOnSpawnTab tab2 = FOnSpawnTab::CreateSP(this, &FMeshViewer::Spawn_PreviewTab);
+	TabManager->RegisterTabSpawner(PreviewTabId, tab2);
+
+	FOnSpawnTab tab3 = FOnSpawnTab::CreateSP(this, &FMeshViewer::Spawn_DetailsTab);
+	TabManager->RegisterTabSpawner(DetailsTabId, tab3);
 }
 
 TSharedRef<SDockTab> FMeshViewer::Spawn_ViewportTab(const FSpawnTabArgs& InArgs)
@@ -91,6 +106,22 @@ TSharedRef<SDockTab> FMeshViewer::Spawn_ViewportTab(const FSpawnTabArgs& InArgs)
 	return SNew(SDockTab)
 		[
 			Viewport.ToSharedRef()
+		];
+}
+
+TSharedRef<SDockTab> FMeshViewer::Spawn_PreviewTab(const FSpawnTabArgs& InArgs)
+{
+	return SNew(SDockTab)
+		[
+			PreviewSceneSettings.ToSharedRef()
+		];
+}
+
+TSharedRef<SDockTab> FMeshViewer::Spawn_DetailsTab(const FSpawnTabArgs& InArgs)
+{
+	return SNew(SDockTab)
+		[
+			DetailsView.ToSharedRef()
 		];
 }
 
